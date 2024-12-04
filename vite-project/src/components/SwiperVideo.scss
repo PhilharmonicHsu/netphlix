@@ -1,0 +1,191 @@
+html, body {
+  overflow-x: hidden;
+  background-color: black;
+}
+
+.swiper {
+  overflow: visible;
+  padding: 0 2rem;
+}
+
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 0; /* 確保元素間沒有額外的間隙 */
+}
+
+.swiper-title {
+  text-align: start;
+  color: white;
+  font-size: 2rem;
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
+.movie-item, .movie-item-left, .movie-item-right {
+  transition: all 0.3s ease;
+  z-index: 1;
+  border-radius: .5rem;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  h3 {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    width: 100%;
+    color: white;
+  }
+
+  .simple_info {
+    height: 0;
+    transition: all 0.3s ease-in-out;
+    background-color: black;
+    color: lightgray;
+    padding: 1.5rem 1.5rem 0 1.5rem;
+    opacity: 0;
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .play_btn {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        background-color: white;
+        border-radius: 50%;
+        border: 1px solid black;
+
+        &:hover {
+          background-color: lightgray;
+          cursor: pointer;
+        }
+      }
+
+      .info_btn {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        background-color: white;
+        border-radius: 50%;
+        border: 1px solid black;
+
+        &:hover {
+          background-color: lightgray;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .category {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+  }
+
+}
+
+.movie-item:hover {
+  transform: scale(1.2); /* 放大效果 */
+  z-index: 9999;
+
+  & .simple_info {
+    height: 5rem;
+    opacity: 1;
+  }
+}
+
+.movie-item-left:hover {
+  transform: translate(25%, 0) scale(1.2); /* 放大效果 */
+  z-index: 9999;
+
+  & .simple_info {
+    height: 5rem;
+    opacity: 1;
+  }
+}
+
+.movie-item-right:hover {
+  transform: translate(-25%, 0) scale(1.2); /* 放大效果 */
+  z-index: 9999;
+
+  & .simple_info {
+    height: 5rem;
+    opacity: 1;
+  }
+}
+
+.swiper-button-prev, .swiper-button-next {
+  color: white; /* 設置箭頭顏色 */
+  width: 3rem;
+  height: 200px;
+  top: 0;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgba(255, 255, 255, 0.8); /* 滑鼠懸停顏色 */
+  color: black;
+}
+
+@mixin swiper_videos($category) {
+  @if $category == 'trending' {
+    top: -12rem;
+  } @else if $category == 'now_playing' {
+    top: 4rem;
+  } @else if $category == 'top_rated' {
+    top: 20rem;
+  } @else if $category == 'upcoming' {
+    top: 36rem;
+  }
+
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0;
+
+  &:hover {
+    z-index: 9;
+  }
+}
+
+.trending {
+  @include swiper_videos('trending')
+}
+
+.now_playing {
+  @include swiper_videos('now_playing')
+}
+
+.top_rated {
+  @include swiper_videos('top_rated')
+}
+
+.upcoming {
+  @include swiper_videos('upcoming')
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
