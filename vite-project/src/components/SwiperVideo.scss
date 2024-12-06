@@ -96,7 +96,6 @@ html, body {
       font-size: 0.8rem;
     }
   }
-
 }
 
 .movie-item:hover {
@@ -202,6 +201,7 @@ html, body {
 .top_rated_tv {
   @include swiper_videos('top_rated_tv')
 }
+
 
 @keyframes scale-up {
   from {

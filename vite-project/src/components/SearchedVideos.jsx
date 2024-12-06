@@ -4,9 +4,19 @@ import {useRef, useState, useEffect} from "react";
 import Dialog from "./Dialog.jsx";
 
 function getClasses(index) {
-  if (index%5 === 0) {
+  if (window.innerWidth < 901) {
+    return 'movie-item'
+  }
+
+  let unit = 5;
+
+  if (window.innerWidth < 1190) {
+    unit = 4;
+  }
+
+  if (index % unit === 0) {
     return 'movie-item-left'
-  } else if (index%5 === 4) {
+  } else if (index % unit === (unit - 1)) {
     return 'movie-item-right'
   }
 

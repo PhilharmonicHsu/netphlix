@@ -191,12 +191,7 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) 
   }
 
   return <>
-    <div ref={containerRef} style={{
-      width: "100%",
-      position: "relative",
-      height: '810px'
-    }}
-    >
+    <div ref={containerRef} className={styles.container}>
       <div id="youtube-player" style={{border: "none"}}></div>
       <div
         ref={videoInfoRef}
@@ -215,23 +210,12 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) 
         }}
       ></div>
 
-      <div style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        color: "white",
-        display: "flex",
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        paddingTop: '3rem',
-        paddingLeft: '5rem',
-      }}>
+      <div className={styles['main-info-cover']}>
         <div className={styles.dir} style={{
           width: window.innerWidth / 2,
           height: (window.innerWidth * 9) / 16,
         }}>
-          <h1 className={`${styles['main-title']} ${isPreview ? styles['zoom-out'] : ''}`}>{mainVideo.title}</h1>
+          <div className={`${styles['main-title']} ${isPreview ? styles['zoom-out'] : ''}`}>{mainVideo.title}</div>
           <h2 className={`${styles['main-release-day']} ${isPreview ? styles['hidden'] : ''}`}><strong>RELEASE
             DATE: {mainVideo.release_date}</strong></h2>
           <div className={`${styles['main-overview']} ${isPreview ? styles['hidden'] : ''}`}><em>{mainVideo.overview}</em></div>

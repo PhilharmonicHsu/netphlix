@@ -2,12 +2,17 @@ body.modal-open {
   overflow: hidden !important; /* 禁用背景滾動 */
 }
 
-main {
-  margin-top: 68px;
+
+.container {
+  width: 100%;
+  position: relative;
+  height: 810px;
 }
 
-#youtube-player {
-  height: 810px;
+@media (min-width: 600px) and (max-width: 1000px) {
+  .container {
+    height: 680px;
+  }
 }
 
 .small-text {
@@ -22,54 +27,182 @@ main {
   position: relative;
 }
 
-.main-title {
+.main-info-cover {
   position: absolute;
-  bottom: 28rem;
+  top: 0;
   left: 0;
-  font-size: 10rem;
-  margin-bottom: 1rem;
-  transition: all 1s ease-in-out;
-  text-align: start;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 3rem;
+  padding-left: 5rem;
+
+  .main-title {
+    position: absolute;
+    bottom: 28rem;
+    left: 0;
+    font-size: 8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    transition: all 1s ease-in-out;
+    text-align: start;
+    width: 100vw;
+  }
+
+  .zoom-out {
+    margin-top: 15rem;
+    font-size: 5rem;
+    bottom: 19rem;
+  }
+
+  .main-release-day {
+    position: absolute;
+    bottom: 27rem;
+    left: 0;
+    opacity: 1;
+    height: auto;
+    text-align: left;
+    margin: auto;
+  }
+
+  .main-overview {
+    position: absolute;
+    bottom: 22rem;
+    left: 0;
+    opacity: 1;
+    width: 600px;
+    height: auto;
+    text-align: left;
+    margin: 0;
+  }
+
+  .hidden {
+    margin: 0;
+    animation: shrinkFadeOut 1s forwards; /* 啟用動畫 */
+  }
+
+  .buttons {
+    position: absolute;
+    left: 0;
+    bottom: 18rem;
+    margin-top: 1.5rem;
+    text-align: start;
+  }
 }
 
-.zoom-out {
-  margin-top: 15rem;
-  font-size: 5rem;
-  bottom: 19rem;
+@media (min-width: 600px) and (max-width: 1189px) {
+  .main-info-cover {
+    .main-title {
+      bottom: 20rem;
+      font-size: 5rem;
+    }
+
+    .main-release-day {
+      bottom: 19rem;
+    }
+
+    .main-overview {
+      bottom: 14rem;
+    }
+
+    .zoom-out {
+      font-size: 3rem;
+      bottom: 11rem;
+    }
+
+    .buttons {
+      bottom: 10rem;
+    }
+  }
 }
 
-.main-release-day {
-  position: absolute;
-  bottom: 27rem;
-  left: 0;
-  opacity: 1;
-  height: auto;
-  text-align: left;
-  margin: auto;
+@media (min-width: 801px) and (max-width: 1000px) {
+  .main-info-cover {
+    padding-left: 3rem;
+
+    .main-title {
+      bottom: 20rem;
+      font-size: 5rem;
+    }
+
+    .main-release-day {
+      bottom: 19rem;
+    }
+
+    .main-overview {
+      bottom: 14rem;
+    }
+
+    .zoom-out {
+      font-size: 3rem;
+      bottom: 11rem;
+    }
+
+    .buttons {
+      bottom: 10rem;
+    }
+  }
 }
 
-.main-overview {
-  position: absolute;
-  bottom: 22rem;
-  left: 0;
-  opacity: 1;
-  width: 600px;
-  height: auto;
-  text-align: left;
-  margin: 0;
+@media (min-width: 701px) and (max-width: 800px) {
+  .main-info-cover {
+    padding-left: 1rem;
+
+    .main-title {
+      bottom: 20rem;
+      font-size: 5rem;
+    }
+
+    .main-release-day {
+      bottom: 19rem;
+    }
+
+    .main-overview {
+      bottom: 14rem;
+    }
+
+    .zoom-out {
+      font-size: 3rem;
+      bottom: 11rem;
+    }
+
+    .buttons {
+      bottom: 10rem;
+    }
+  }
 }
 
-.hidden {
-  margin: 0;
-  animation: shrinkFadeOut 1s forwards; /* 啟用動畫 */
-}
+@media (min-width: 360px) and (max-width: 700px) {
+  .main-info-cover {
+    padding-left: 1rem;
 
-.buttons {
-  position: absolute;
-  left: 0;
-  bottom: 18rem;
-  margin-top: 1.5rem;
-  text-align: start;
+    .main-title {
+      bottom: 14rem;
+      font-size: 3rem;
+    }
+
+    .main-release-day {
+      bottom: 13rem;
+      font-size: 1rem;
+      width: 100vw;
+    }
+
+    .main-overview {
+      bottom: 8rem;
+      font-size: 1rem;
+    }
+
+    .zoom-out {
+      font-size: 2rem;
+      bottom: 5.3rem;
+    }
+
+    .buttons {
+      bottom: 4rem;
+    }
+  }
 }
 
 @keyframes shrinkFadeOut {

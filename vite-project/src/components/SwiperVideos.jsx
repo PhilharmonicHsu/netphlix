@@ -8,13 +8,37 @@ import {useRef, useState, useEffect} from "react";
 import Dialog from "./Dialog.jsx";
 
 function getClasses(index) {
-  if (index%5 === 0) {
+  if (window.innerWidth < 901) {
+    return 'movie-item'
+  }
+
+  let unit = 5;
+
+  if (window.innerWidth < 1190) {
+    unit = 4;
+  }
+
+  if (index % unit === 0) {
     return 'movie-item-left'
-  } else if (index%5 === 4) {
+  } else if (index % unit === (unit - 1)) {
     return 'movie-item-right'
   }
 
   return 'movie-item'
+}
+
+function getSwiperUnit() {
+  if (window.innerWidth < 601) {
+    return 1;
+  } else if (window.innerWidth < 801) {
+    return 2;
+  } else if (window.innerWidth < 901) {
+    return 3;
+  } else if (window.innerWidth < 1190) {
+    return 4;
+  } else {
+    return 5;
+  }
 }
 
 function MovieItem({video, index, mediaType, handleCardClick}) {
@@ -133,9 +157,9 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
   return <div className={category} >
     <div className="swiper-title">{children}</div>
     <Swiper modules={[Navigation]}
-            spaceBetween={5}
-            slidesPerView={5}
-            slidesPerGroup={5}
+            spaceBetween={getSwiperUnit()}
+            slidesPerView={getSwiperUnit()}
+            slidesPerGroup={getSwiperUnit()}
             speed={2000}
             centeredSlides={false}
             loop
