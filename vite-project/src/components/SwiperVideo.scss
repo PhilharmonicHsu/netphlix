@@ -22,6 +22,10 @@ html, body {
   font-size: 2rem;
   margin-left: 2rem;
   margin-bottom: 1rem;
+
+  &.light {
+    color: black;
+  }
 }
 
 .movie-item, .movie-item-left, .movie-item-right {
@@ -94,6 +98,7 @@ html, body {
       margin-top: 1rem;
       text-align: center;
       font-size: 0.8rem;
+      padding-bottom: 1rem;
     }
   }
 }

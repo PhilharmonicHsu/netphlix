@@ -192,9 +192,9 @@ const MainVideoDialog= forwardRef((
     <section className={styles.companies}>
       {
         videoDetail.production_companies.map(
-          company => company.logo_path
-            ? <img className={styles['company-logo']} src={getImgUrl(company.logo_path)} alt={company.name}/>
-            : <span>{company.name}</span>
+          (company, index) => company.logo_path
+            ? <img key={index} className={styles['company-logo']} src={getImgUrl(company.logo_path)} alt={company.name}/>
+            : <span key={index}>{company.name}</span>
         )
       }
     </section>

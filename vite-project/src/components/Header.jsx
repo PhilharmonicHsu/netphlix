@@ -3,7 +3,7 @@ import styles from './Header.module.scss';
 import classNames from "classnames";
 import {OPTIONS} from "./utils.js";
 
-export default function Header({updateValue}) {
+export default function Header({updateValue, handleChangeMode, isLightMode}) {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const inputRef = useRef(null);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -105,7 +105,9 @@ export default function Header({updateValue}) {
 
   return (
     <nav className={styles.navbar}
-         style={{backgroundColor: `rgba(0, 0, 0, ${backgroundOpacity})`}}
+         style={{
+           backgroundColor: isLightMode ? `rgba(255, 255, 255, ${backgroundOpacity})` : `rgba(0, 0, 0, ${backgroundOpacity})`
+         }}
     >
       <div className={styles.left_side}>
         <div className={styles.navbar_logo}>
@@ -114,6 +116,7 @@ export default function Header({updateValue}) {
 
         <div className={classNames({
           [styles.navbar_links]: true,
+          [styles.light]: isLightMode,
         })}>
           {screenWidth > 1024
             ? <>
@@ -136,7 +139,7 @@ export default function Header({updateValue}) {
               <div className={
                 classNames({
                   [styles.dropdown_menu]: true,
-                  [styles.open]: isOpen
+                  [styles.open]: isOpen,
                 })
               }>
                 <div className={styles.dropdown_arrow}></div>
@@ -156,7 +159,8 @@ export default function Header({updateValue}) {
         <div
           className={classNames({
             [styles.search_container]: true,
-            [styles.active]: isSearchActive
+            [styles.active]: isSearchActive,
+            [styles.light]: isLightMode,
           })}
           onClick={handleSearchClick}
         >
@@ -170,11 +174,19 @@ export default function Header({updateValue}) {
             ref={inputRef}
             type="text"
             placeholder="片名、人員、類型"
-            className={styles.search_input}
+            className={
+            classNames({
+              [styles.search_input]: true,
+              [styles.light]: isLightMode
+            })
+          }
             onBlur={handleBlur}
             onChange={onChange}
           />
         </div>
+        <button onClick={() => handleChangeMode(true)}>
+          light
+        </button>
       </div>
     </nav>
   )

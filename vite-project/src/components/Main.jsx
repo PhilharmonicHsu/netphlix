@@ -4,9 +4,10 @@ import SwiperVideos from "./SwiperVideos.jsx";
 import {OPTIONS} from "./utils.js";
 import SearchedVideos from "./SearchedVideos.jsx";
 
-export default function Main({value}) {
+export default function Main({value, isLightMode}) {
   const mainVideoRef = useRef(null);
   const mainPlayerRef = useRef(null);
+  const mainPlayerIdRef = useRef(null);
   const dialogPlayerRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [movies, setMovies] = useState([]);
@@ -107,33 +108,33 @@ export default function Main({value}) {
   }
 
   return <>
-    <main>
+    <main style={{
+      backgroundColor: isLightMode ? 'white' : 'black'
+    }}>
       {
         (value.length === 0) ?
           <>
-            <MainVideo ref={mainVideoRef} mainVideo={movies[0]} mainPlayerRef={mainPlayerRef} dialogPlayerRef={dialogPlayerRef} />
+            <MainVideo ref={mainVideoRef} mainVideo={movies[0]} mainPlayerRef={mainPlayerRef} mainPlayerIdRef={mainPlayerIdRef} dialogPlayerRef={dialogPlayerRef} />
             <div style={{position: 'relative', height: '125rem'}}>
               <SwiperVideos videos={movies} category="trending" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo}>Trending</SwiperVideos>
+                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Trending</SwiperVideos>
               <SwiperVideos videos={nowPlayingMovies} category="now_playing" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo}>Now Playing</SwiperVideos>
+                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Now Playing</SwiperVideos>
               <SwiperVideos videos={topRatedMovies} category="top_rated" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo}>Top Rated</SwiperVideos>
+                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Top Rated</SwiperVideos>
               <SwiperVideos videos={upcomingMovies} category="upcoming" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo}>Upcoming</SwiperVideos>
+                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Upcoming</SwiperVideos>
               <SwiperVideos videos={airingTodayTVs} category="airing_today" mediaType="tv" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo}>Airing Today</SwiperVideos>
+                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Airing Today</SwiperVideos>
               <SwiperVideos videos={onTheAirTVs} category="on_the_air" mediaType="tv" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo}>On The Air</SwiperVideos>
-              <SwiperVideos videos={popularTVs} category="popular_tv" mediaType="tv">Popular TV</SwiperVideos>
-              <SwiperVideos videos={topRatedTVs} category="top_rated_tv" mediaType="tv">Top Rated TV</SwiperVideos>
+                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>On The Air</SwiperVideos>
+              <SwiperVideos videos={popularTVs} category="popular_tv" mediaType="tv" isLightMode={isLightMode}>Popular TV</SwiperVideos>
+              <SwiperVideos videos={topRatedTVs} category="top_rated_tv" mediaType="tv" isLightMode={isLightMode}>Top Rated TV</SwiperVideos>
             </div>
           </>
           :
           <SearchedVideos videos={value}></SearchedVideos>
     }
-
-
     </main>
   </>
 }

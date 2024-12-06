@@ -3,7 +3,7 @@ import styles from './MainVideo.module.scss'
 import {OPTIONS, getImgUrl} from './utils.js'
 import MainVideoDialog from "./MainVideoDialog.jsx";
 
-const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) => {
+const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialogPlayerRef}, ref) => {
   const containerRef = useRef(null);
   const videoInfoRef = useRef(null);
   const dialog = useRef(null);
@@ -15,8 +15,6 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) 
   const [similarVideos, setSimilarVideos] = useState([]);
   const [isPreview, setIsPreview] = useState(false);
   const [movieVideo, setMovieVideo] = useState(null);
-
-  let dd;
 
   useImperativeHandle(ref, () => ({
     playMainVideo: () => {
@@ -36,52 +34,22 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) 
     let data = await response.json()
 
     setMovieVideo(() => data.results[0])
-
-    const tag = document.createElement('script');
-    tag.id = 'youtube-iframe-api'
-    tag.src = 'https://www.youtube.com/iframe_api';
-    document.body.appendChild(tag);
-
-    dd = data.results[0].key;
+    mainPlayerIdRef.current = data.results[0].key;
 
     if (window.YT) {
-      console.log('有YT', mainPlayerRef.current.loadVideoById(data.results[0].key))
     } else {
-      console.log('沒YT', mainPlayerRef.current)
+      console.log('window.onYouTubeIframeAPIReady')
+      const tag = document.createElement('script');
+      tag.id = 'youtube-iframe-api'
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.body.appendChild(tag);
+
       // 初始化播放器
       window.onYouTubeIframeAPIReady = () => {
-        mainPlayerRef.current = new window.YT.Player('youtube-player', {
-          videoId: data.results[0].key, // 替換成你的影片 ID
-          width: window.innerWidth,
-          height: (window.innerWidth * 9) / 17,
-          playerVars: {
-            autoplay: 1, // 自動播放
-            controls: 0, // 隱藏控制器
-            modestbranding: 1, // 隱藏大型 YouTube 標誌
-            rel: 1, // 不顯示相關影片
-            fs: 0, // 隱藏全螢幕按鈕
-            iv_load_policy: 3, // 隱藏註解
-            mute: 1, // 靜音播放
-            showinfo: 0
-          },
-          events: {
-            onReady: (event) => {
-            },
-            onStateChange: (event) => {
-              if (event.data === window.YT.PlayerState.ENDED) {
-                showBackGroundImage()
-              }
-            },
-          },
-        });
-
+        createPlayer(data.results[0].key)
         dialog.current.registerYtAPI()
-
-        console.log('初始化', mainPlayerRef.current);
       };
     }
-
-
 
     const handleResize = () => {
       if (mainPlayerRef.current && containerRef.current) {
@@ -141,16 +109,43 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) 
 
   useEffect(() => {
     fetchApi()
+  }, [])
 
-    setTimeout(() => {
-      if (containerRef.current) {
-        console.log("Component is ready");
-        console.log('dd:', dd)
-        mainPlayerRef.current.loadVideoById(dd)
-      }
-    }, 1000);
+  useEffect(() => {
+    if (containerRef.current && window.YT && window.YT.Player) {
+      createPlayer(mainPlayerIdRef.current)
+      dialog.current.registerYtAPI()
+    }
+  }, [containerRef.current])
 
-  }, [containerRef])
+  function createPlayer(videoId) {
+    mainPlayerRef.current = new window.YT.Player('youtube-player', {
+      videoId: videoId, // 替換成你的影片 ID
+      width: window.innerWidth,
+      height: (window.innerWidth * 9) / 17,
+      playerVars: {
+        autoplay: 1, // 自動播放
+        controls: 0, // 隱藏控制器
+        modestbranding: 1, // 隱藏大型 YouTube 標誌
+        rel: 1, // 不顯示相關影片
+        fs: 0, // 隱藏全螢幕按鈕
+        iv_load_policy: 3, // 隱藏註解
+        mute: 1, // 靜音播放
+        showinfo: 0
+      },
+      events: {
+        onReady: (event) => {
+          console.log('onReady')
+          mainPlayerRef.current.playVideo()
+        },
+        onStateChange: (event) => {
+          if (event.data === window.YT.PlayerState.ENDED) {
+            showBackGroundImage()
+          }
+        },
+      },
+    });
+  }
 
   function hiddenBackGroundImage() {
     videoInfoRef.current.style.opacity = "0"
@@ -191,7 +186,8 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) 
   }
 
   return <>
-    <div ref={containerRef} className={styles.container}>
+    <div ref={containerRef} className={styles.container}
+    >
       <div id="youtube-player" style={{border: "none"}}></div>
       <div
         ref={videoInfoRef}

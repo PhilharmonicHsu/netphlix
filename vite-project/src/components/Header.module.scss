@@ -33,6 +33,12 @@
       gap: 2rem;
       font-size: 0.9rem;
 
+      &.light {
+        a {
+          color: black;
+        }
+      }
+
       a {
         color: white;
         text-decoration: none;
@@ -133,6 +139,12 @@
       cursor: pointer;
       transition: all 1s ease;
 
+      &.light {
+        svg path {
+          fill: black;
+        }
+      }
+
       .search_icon {
         width: 1.5rem;
         height: 1.5rem;
@@ -147,6 +159,10 @@
         color: white;
         width: 0;
         transition: all 1s ease;
+
+        &.light {
+          color: black;
+        }
       }
 
       &.active {
@@ -158,6 +174,10 @@
         .search_input {
           display: block;
           width: 10rem;
+        }
+
+        &.light {
+          background-color: white;
         }
       }
     }

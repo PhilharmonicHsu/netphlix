@@ -6,6 +6,7 @@ import './SwiperVideo.scss'
 import {getMovieGenreById, getTvGenreById, getImgUrl, OPTIONS} from "./utils.js";
 import {useRef, useState, useEffect} from "react";
 import Dialog from "./Dialog.jsx";
+import classNames from "classnames";
 
 function getClasses(index) {
   if (window.innerWidth < 901) {
@@ -79,7 +80,7 @@ function MovieItem({video, index, mediaType, handleCardClick}) {
   </div>
 }
 
-export default function SwiperVideos({children, videos, category, mediaType, playMainVideo, pauseMainVideo}) {
+export default function SwiperVideos({children, videos, category, mediaType, playMainVideo, pauseMainVideo, isLightMode}) {
   const dialogRef = useRef(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [movieVideo, setMovieVideo] = useState(null);
@@ -93,6 +94,7 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
         if (window.YT && window.YT.Player) {
           dialogRef.current.registerYtAPI();
         } else {
+          console.log('window.onYouTubeIframeAPIReady')
           window.onYouTubeIframeAPIReady = () => {
             dialogRef.current.registerYtAPI();
           };
@@ -155,7 +157,10 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
   }
 
   return <div className={category} >
-    <div className="swiper-title">{children}</div>
+    <div className={classNames({
+      ['swiper-title']: true,
+      ['light']: isLightMode
+    })}>{children}</div>
     <Swiper modules={[Navigation]}
             spaceBetween={getSwiperUnit()}
             slidesPerView={getSwiperUnit()}

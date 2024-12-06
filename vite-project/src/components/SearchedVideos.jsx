@@ -75,6 +75,7 @@ export default function SearchedVideos({videos, mediaType, playMainVideo, pauseM
         if (window.YT && window.YT.Player) {
           dialogRef.current.registerYtAPI();
         } else {
+          console.log('window.onYouTubeIframeAPIReady')
           window.onYouTubeIframeAPIReady = () => {
             dialogRef.current.registerYtAPI();
           };

@@ -1,5 +1,8 @@
-export default function Footer() {
-  return <footer style={{height: '20rem', backgroundColor: 'blue'}}>
+export default function Footer({isLightMode}) {
+  return <footer style={{
+    height: '20rem',
+    backgroundColor: isLightMode ? 'white' : 'black',
+  }}>
 
   </footer>
 }
