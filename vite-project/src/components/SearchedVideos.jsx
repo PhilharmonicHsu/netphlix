@@ -1,8 +1,4 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import './SwiperVideo.scss'
+import './SearchedVideos.scss'
 import {getMovieGenreById, getTvGenreById, getImgUrl, OPTIONS} from "./utils.js";
 import {useRef, useState, useEffect} from "react";
 import Dialog from "./Dialog.jsx";
@@ -18,7 +14,6 @@ function getClasses(index) {
 }
 
 function MovieItem({video, index, mediaType, handleCardClick}) {
-
   return <div className={getClasses(index)}>
     <img src={getImgUrl(video.backdrop_path)} alt={video.title}/>
     {
@@ -55,17 +50,18 @@ function MovieItem({video, index, mediaType, handleCardClick}) {
   </div>
 }
 
-export default function SwiperVideos({children, videos, category, mediaType, playMainVideo, pauseMainVideo}) {
+export default function SearchedVideos({videos, mediaType, playMainVideo, pauseMainVideo}) {
   const dialogRef = useRef(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [movieVideo, setMovieVideo] = useState(null);
   const [videoDetail, setVideoDetail] = useState({genres: []});
   const [videoCasts, setVideoCasts] = useState([]);
   const [similarVideos, setSimilarVideos] = useState([]);
+  const [selectedMediaType, setSelectedMediaType] = useState("movie");
 
   useEffect(() => {
     if (isDialogOpen && dialogRef.current) {
-      if (mediaType === 'movie') {
+      if (selectedMediaType === 'movie') {
         if (window.YT && window.YT.Player) {
           dialogRef.current.registerYtAPI();
         } else {
@@ -76,53 +72,51 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
       }
       dialogRef.current.showModal();
     }
-  }, [isDialogOpen]);
+  }, [isDialogOpen, selectedMediaType]);
 
-  const handleCardClick = async (movieId) => {
-    pauseMainVideo()
-    await getMovieVideos(movieId);
-    await getMovieDetail(movieId);
-    await getMovieCasts(movieId);
-    await getSimilarVideos(movieId);
+  const handleCardClick = async (movie) => {
+    await getMovieVideos(movie.id, movie.media_type);
+    await getMovieDetail(movie.id, movie.media_type);
+    await getMovieCasts(movie.id, movie.media_type);
+    await getSimilarVideos(movie.id, movie.media_type);
 
     setIsDialogOpen(true);
+    setSelectedMediaType(movie.media_type);
   };
 
   const handleCloseModal = () => {
     setIsDialogOpen(false);
-    playMainVideo()
     dialogRef.current.close();
   };
 
-  async function getMovieVideos(movieId) {
-    console.log(`https://api.themoviedb.org/3/${mediaType}/${movieId}/videos?language=en-US`)
+  async function getMovieVideos(movieId, mediaType) {
     let response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/videos?language=en-US`, OPTIONS)
     let data = await response.json()
 
     setMovieVideo(() => data.results[0])
   }
 
-  async function getMovieDetail(movieId) {
+  async function getMovieDetail(movieId, mediaType) {
     let response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}`, OPTIONS)
     let data = await response.json()
 
     setVideoDetail(data);
   }
 
-  async function getMovieCasts(movieId) {
+  async function getMovieCasts(movieId, mediaType) {
     let response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/credits?api_key=4c286b1e917ea42a64a67ebf38acbe7f`, OPTIONS)
     let data = await response.json()
 
     setVideoCasts(data.cast)
   }
 
-  async function getSimilarVideos(movieId) {
+  async function getSimilarVideos(movieId, mediaType) {
     let response;
 
     if (mediaType === 'movie') {
-      response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/similar?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
+      response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
     } else {
-      response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/recommendations?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
+      response = await fetch(`https://api.themoviedb.org/3/tv/${movieId}/recommendations?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
     }
 
     let data = await response.json()
@@ -130,36 +124,23 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
     setSimilarVideos(data.results)
   }
 
-  return <div className={category} >
-    <div className="swiper-title">{children}</div>
-    <Swiper modules={[Navigation]}
-            spaceBetween={5}
-            slidesPerView={5}
-            slidesPerGroup={5}
-            speed={2000}
-            centeredSlides={false}
-            loop
-            navigation
-    >
-      {videos.map((video, index) => (
-        <SwiperSlide key={index}>
-          <MovieItem
-            video={video}
-            index={index}
-            mediaType={mediaType}
-            handleCardClick={handleCardClick}
-          />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+  return <div className="searchedList">
+    {videos.map((video, index) => (
+        <MovieItem
+          video={video}
+          index={index}
+          mediaType={video.media_type}
+          handleCardClick={() => handleCardClick(video)}
+        />
+    ))}
     { isDialogOpen && <Dialog ref={dialogRef}
                               closeModal={handleCloseModal}
                               videoDetail={videoDetail}
                               similarVideos={similarVideos}
                               videoCasts={videoCasts}
-                              ytVideoId={ mediaType === 'movie' ? movieVideo.key : null}
+                              ytVideoId={ selectedMediaType === 'movie' ? movieVideo.key : null}
                               isMain={false}
-                              mediaType={mediaType}
+                              mediaType={selectedMediaType}
     />}
   </div>
 }

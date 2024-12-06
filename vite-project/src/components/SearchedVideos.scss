@@ -1,0 +1,132 @@
+html, body {
+  overflow-x: hidden;
+  background-color: black;
+}
+
+.searchedList {
+  position: relative; /* 父容器層級管理 */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  isolation: isolate; /* 啟用隔離模式 */
+  overflow: visible;
+
+  .movie-item, .movie-item-left, .movie-item-right {
+    transition: all 0.3s ease;
+    z-index: 1;
+
+    overflow: visible;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 180px;
+
+    img {
+      width: 100%;
+      height: 155px;
+      margin: 0;
+      padding: 0;
+      border-radius: .5rem .5rem 0 0;
+    }
+
+    h3 {
+      position: absolute;
+      top: 40%;
+      left: 0;
+      width: 100%;
+      color: white;
+    }
+
+    .simple_info {
+      height: 0;
+      transition: all 0.3s ease-in-out;
+      background-color: black;
+      color: lightgray;
+      padding: 1.5rem 1.5rem 0 1.5rem;
+      border-radius: 0 0 .5rem .5rem;
+      opacity: 0;
+
+      .buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .play_btn {
+          width: 2rem;
+          height: 2rem;
+          padding: 0;
+          background-color: white;
+          border-radius: 50%;
+          border: 1px solid black;
+
+          &:hover {
+            background-color: lightgray;
+            cursor: pointer;
+          }
+        }
+
+        .info_btn {
+          width: 2rem;
+          height: 2rem;
+          padding: 0;
+          background-color: white;
+          border-radius: 50%;
+          border: 1px solid black;
+
+          &:hover {
+            background-color: lightgray;
+            cursor: pointer;
+          }
+        }
+      }
+
+      .category {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+    }
+
+  }
+
+  .movie-item:hover {
+    transform: scale(1.2); /* 放大效果 */
+    z-index: 9999;
+
+    & .simple_info {
+      height: 5rem;
+      opacity: 1;
+    }
+  }
+
+  .movie-item-left:hover {
+    transform: translate(25%, 0) scale(1.2); /* 放大效果 */
+    z-index: 9999;
+
+    & .simple_info {
+      height: 5rem;
+      opacity: 1;
+    }
+  }
+
+  .movie-item-right:hover {
+    transform: translate(-25%, 0) scale(1.2); /* 放大效果 */
+    z-index: 9999;
+
+    & .simple_info {
+      height: 5rem;
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

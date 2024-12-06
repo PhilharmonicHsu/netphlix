@@ -1,169 +1,14 @@
 body.modal-open {
-  overflow: hidden; /* 禁用背景滾動 */
+  overflow: hidden !important; /* 禁用背景滾動 */
 }
 
-.main-dialog {
-  position: fixed; /* 固定在螢幕的某個位置 */
-  bottom: 0; /* 貼合螢幕底部 */
-  width: 50rem;
-  margin-top: 2.5rem;
-  height: calc(100% - 5rem);
-  border-radius: .5rem;
-  border: none;
-  background-color: black;
-  color: lightgray;
-
-  .dialog-button-area {
-    text-align: justify;
-
-    button {
-      padding: 10px 20px;
-      background-color: lightgray;
-      color: black;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-  }
-
-  .dialog-header {
-    position: absolute;
-    top: 10rem;
-    left: 0;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding-top: 1rem;
-    padding-left: 2rem;
-  }
-
-  .dialog-close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    border: 1px solid white;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background-color: black;
-
-    &:hover {
-      background-color: black;
-      cursor: pointer;
-    }
-
-    .close-svg path {
-      fill: white;
-    }
-  }
-
-  .inform {
-    margin-top: 2rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: 0 1rem;
-    gap: 1.5rem;
-
-    .inform-cell-left {
-      grid-column: span 2;
-      text-align: start;
-    }
-
-    .inform-cell-right {
-      text-align: start;
-    }
-  }
-
-  .similar {
-    text-align: start;
-    padding: 0 1rem;
-    position: relative;
-
-    h3 {
-      margin: 0;
-      padding: 1.5rem 0;
-    }
-
-    .similar-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1rem;
-      transition: max-height 0.3s ease-in-out;
-      max-height: 100%;
-      overflow: hidden;
-
-      &.expended {
-        max-height: 100%;
-      }
-
-      &.collapsed {
-        max-height: 60rem !important;
-      }
-
-      .card {
-        padding: 0;
-        background-color: #2F2F2F;
-        position: relative;
-        border-radius: 1rem;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-        }
-
-        .video-title {
-          position: absolute;
-          top: 7rem;
-          left: 50%;
-          transform: translate(-50%, -50%); /* 平移使其居中 */
-          width: 100%;
-          text-align: center;
-          color: white; /* 文字顏色 */
-          -webkit-text-stroke: 0.2px darkgray; /* 描邊顏色與寬度 */
-          font-size: 1.5rem;
-        }
-
-        .similar-inform {
-          padding: 1rem;
-
-          .release-year {
-            width: 100%;
-            font-size: 0.8rem;
-
-            em {
-              font-size: 1rem;
-            }
-          }
-        }
-      }
-    }
-
-    .toggle-button {
-      position: absolute;
-      bottom: -1.5rem;
-      left: calc(50% - 1.5rem);
-      width: 3rem;
-      height: 3rem;
-      text-align: center;
-      padding: 0;
-      border-radius: 50%;
-      border: 2px solid lightgray;
-    }
-  }
+main {
+  margin-top: 68px;
 }
 
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.4); /* 背景遮罩顏色 */
-  backdrop-filter: blur(2px); /* 添加模糊效果，可選 */
+#youtube-player {
+  height: 810px;
 }
-
-
 
 .small-text {
   font-size: 0.8rem;
@@ -211,16 +56,11 @@ dialog::backdrop {
   width: 600px;
   height: auto;
   text-align: left;
-  /*transition: all 1s ease-in-out;*/
   margin: 0;
-  /*transform: translate(-50%, -50%);*/
 }
 
 .hidden {
-  /*opacity: 0;*/
-  /*height: 0;*/
   margin: 0;
-  /*bottom: 10rem;*/
   animation: shrinkFadeOut 1s forwards; /* 啟用動畫 */
 }
 
@@ -240,18 +80,5 @@ dialog::backdrop {
   100% {
     transform: translate(-80%, 80%) ; /* 向左下移動並縮小 */
     opacity: 0; /* 完全透明 */
-  }
-}
-
-.companies {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1.5rem;
-
-  .company-logo {
-    width: 3rem;
-    height: 3rem;
-    margin: 1rem
   }
 }

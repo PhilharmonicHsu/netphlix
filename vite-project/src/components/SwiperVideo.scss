@@ -151,6 +151,14 @@ html, body {
     top: 20rem;
   } @else if $category == 'upcoming' {
     top: 36rem;
+  } @else if $category == 'airing_today' {
+    top: 52rem;
+  } @else if $category == 'on_the_air' {
+    top: 68rem;
+  } @else if $category == 'popular_tv' {
+    top: 84rem;
+  } @else if $category == 'top_rated_tv' {
+    top: 100rem;
   }
 
   position: absolute;
@@ -177,6 +185,22 @@ html, body {
 
 .upcoming {
   @include swiper_videos('upcoming')
+}
+
+.airing_today {
+  @include swiper_videos('airing_today')
+}
+
+.on_the_air {
+  @include swiper_videos('on_the_air')
+}
+
+.popular_tv {
+  @include swiper_videos('popular_tv')
+}
+
+.top_rated_tv {
+  @include swiper_videos('top_rated_tv')
 }
 
 @keyframes scale-up {

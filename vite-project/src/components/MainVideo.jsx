@@ -1,90 +1,92 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState, forwardRef, useImperativeHandle} from "react";
 import styles from './MainVideo.module.scss'
-import {OPTIONS} from './utils.js'
+import {OPTIONS, getImgUrl} from './utils.js'
+import MainVideoDialog from "./MainVideoDialog.jsx";
 
-function getImgUrl(posterPath) {
-  return `https://image.tmdb.org/t/p/w780/${posterPath}`
-}
-
-export default function MainVideo({mainVideo}) {
-  const playerRef = useRef(null);
+const MainVideo = forwardRef(({mainVideo, mainPlayerRef, dialogPlayerRef}, ref) => {
   const containerRef = useRef(null);
   const videoInfoRef = useRef(null);
   const dialog = useRef(null);
-  const dialogPlayerRef = useRef(null);
-  const dialogInfoRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState(null);
   const [videoDetail, setVideoDetail] = useState({genres: []});
   const [videoCasts, setVideoCasts] = useState([]);
   const [similarVideos, setSimilarVideos] = useState([]);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [movieVideo, setMovieVideo] = useState(null);
+
+  let dd;
+
+  useImperativeHandle(ref, () => ({
+    playMainVideo: () => {
+      playVideo();
+      hiddenBackGroundImage()
+      document.body.classList.remove(styles['modal-open']); // 禁用背景滾動
+    },
+    pauseMainVideo: () => {
+      pauseVideo();
+      showBackGroundImage();
+      document.body.classList.add(styles['modal-open']); // 禁用背景滾動
+    }
+  }))
 
   async function getMovieVideos() {
     let response = await fetch(`https://api.themoviedb.org/3/movie/${mainVideo.id}/videos?language=en-US`, OPTIONS)
     let data = await response.json()
+
+    setMovieVideo(() => data.results[0])
 
     const tag = document.createElement('script');
     tag.id = 'youtube-iframe-api'
     tag.src = 'https://www.youtube.com/iframe_api';
     document.body.appendChild(tag);
 
-    // 初始化播放器
-    window.onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player('youtube-player', {
-        videoId: data.results[0].key, // 替換成你的影片 ID
-        width: window.innerWidth,
-        height: (window.innerWidth * 9) / 17,
-        playerVars: {
-          autoplay: 1, // 自動播放
-          controls: 0, // 隱藏控制器
-          modestbranding: 1, // 隱藏大型 YouTube 標誌
-          rel: 1, // 不顯示相關影片
-          fs: 0, // 隱藏全螢幕按鈕
-          iv_load_policy: 3, // 隱藏註解
-          mute: 1, // 靜音播放
-          showinfo: 0
-        },
-        events: {
-          onReady: (event) => {},
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
-              showBackGroundImage()
-            }
-          },
-        },
-      });
+    dd = data.results[0].key;
 
-      dialogPlayerRef.current = new window.YT.Player('dialog-player', {
-        videoId: data.results[0].key, // 替換成你的影片 ID
-        width: '100%',
-        playerVars: {
-          autoplay: 1, // 自動播放
-          controls: 0, // 隱藏控制器
-          modestbranding: 1, // 隱藏大型 YouTube 標誌
-          rel: 1, // 不顯示相關影片
-          fs: 0, // 隱藏全螢幕按鈕
-          iv_load_policy: 3, // 隱藏註解
-          mute: 1, // 靜音播放
-          showinfo: 0
-        },
-        events: {
-          onReady: (event) => {},
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
-              showDialogBackGroundImage()
-            }
+    if (window.YT) {
+      console.log('有YT', mainPlayerRef.current.loadVideoById(data.results[0].key))
+    } else {
+      console.log('沒YT', mainPlayerRef.current)
+      // 初始化播放器
+      window.onYouTubeIframeAPIReady = () => {
+        mainPlayerRef.current = new window.YT.Player('youtube-player', {
+          videoId: data.results[0].key, // 替換成你的影片 ID
+          width: window.innerWidth,
+          height: (window.innerWidth * 9) / 17,
+          playerVars: {
+            autoplay: 1, // 自動播放
+            controls: 0, // 隱藏控制器
+            modestbranding: 1, // 隱藏大型 YouTube 標誌
+            rel: 1, // 不顯示相關影片
+            fs: 0, // 隱藏全螢幕按鈕
+            iv_load_policy: 3, // 隱藏註解
+            mute: 1, // 靜音播放
+            showinfo: 0
           },
-        },
-      });
-    };
+          events: {
+            onReady: (event) => {
+            },
+            onStateChange: (event) => {
+              if (event.data === window.YT.PlayerState.ENDED) {
+                showBackGroundImage()
+              }
+            },
+          },
+        });
+
+        dialog.current.registerYtAPI()
+
+        console.log('初始化', mainPlayerRef.current);
+      };
+    }
+
+
 
     const handleResize = () => {
-      if (playerRef.current && containerRef.current) {
+      if (mainPlayerRef.current && containerRef.current) {
         const newWidth = containerRef.current.offsetWidth;
-        playerRef.current.setSize(newWidth, (newWidth * 9) / 16);
+        mainPlayerRef.current.setSize(newWidth, (newWidth * 9) / 16);
       }
     };
 
@@ -139,7 +141,16 @@ export default function MainVideo({mainVideo}) {
 
   useEffect(() => {
     fetchApi()
-  }, [])
+
+    setTimeout(() => {
+      if (containerRef.current) {
+        console.log("Component is ready");
+        console.log('dd:', dd)
+        mainPlayerRef.current.loadVideoById(dd)
+      }
+    }, 1000);
+
+  }, [containerRef])
 
   function hiddenBackGroundImage() {
     videoInfoRef.current.style.opacity = "0"
@@ -150,28 +161,16 @@ export default function MainVideo({mainVideo}) {
   }
 
   function playVideo() {
-    playerRef.current.playVideo()
+    mainPlayerRef.current.playVideo()
   }
 
   function pauseVideo() {
-    playerRef.current.pauseVideo()
-  }
-
-  function showDialogBackGroundImage() {
-    dialogInfoRef.current.style.opacity = "1"
-  }
-
-  function playDialogVideo() {
-    dialogPlayerRef.current.playVideo();
-  }
-
-  function pauseDialogVideo() {
-    dialogPlayerRef.current.pauseVideo();
+    mainPlayerRef.current.pauseVideo()
   }
 
   function openModal() {
     dialog.current.showModal(); // 確保已綁定後調用 showModal
-    playDialogVideo();
+    dialog.current.playDialogVideo();
 
     pauseVideo();
     showBackGroundImage();
@@ -179,27 +178,12 @@ export default function MainVideo({mainVideo}) {
   }
 
   function closeModal() {
-    dialog.current.close();
-    pauseDialogVideo();
+    dialog.current.closeModal();
+    dialog.current.pauseDialogVideo();
 
     hiddenBackGroundImage();
     playVideo()
     document.body.classList.remove(styles['modal-open']); // 禁用背景滾動
-  }
-
-  function toggleExpand() {
-    setIsExpanded((prev) => {
-      const newState = ! prev;
-
-      if (! newState) {
-        document.querySelector(`.${styles.similar}`).scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-
-      return newState;
-    });
   }
 
   if (loading) {
@@ -209,7 +193,8 @@ export default function MainVideo({mainVideo}) {
   return <>
     <div ref={containerRef} style={{
       width: "100%",
-      position: "relative"
+      position: "relative",
+      height: '810px'
     }}
     >
       <div id="youtube-player" style={{border: "none"}}></div>
@@ -281,91 +266,17 @@ export default function MainVideo({mainVideo}) {
         </div>
       </div>
     </div>
-    <dialog id="main-dialog" className={styles['main-dialog']} ref={dialog} onClose={closeModal}>
-      <div id="dialog-player" style={{border: "none"}}></div>
-      <div
-        ref={dialogInfoRef}
-        style={{
-          position: "absolute",
-          top: '0',
-          left: '0',
-          width: '100%',
-          height: '24rem',
-          backgroundImage: `url('${mainImage}')`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: "cover",
-          backgroundPosition: 'top right',
-          opacity: "0",
-          transition: 'opacity 0.5s ease'
-        }}
-      ></div>
-      <div className={styles['dialog-header']}>
-        <section className={styles['header']}>
-          <h1 style={{fontSize: '3rem', marginBottom: '1rem'}}>{videoDetail.title}</h1>
-          <div className={styles['dialog-button-area']}>
-            <button onClick={showDialogBackGroundImage}>▶ 播放</button>
-          </div>
-        </section>
-      </div>
-      <button className={styles['dialog-close-btn']} onClick={closeModal}>
-        <svg className={styles['close-svg']} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
-                fill="black"/>
-        </svg>
-      </button>
-      <section className={styles.inform}>
-        <div className={styles['inform-cell-left']}>
-          <span>
-            <span className={styles['small-text']}>Release at </span><strong><em>{videoDetail.release_date.slice(0, 4)}</em></strong>
-            <span className={styles['small-text']}>  Runtime: </span><strong><em>{videoDetail.runtime}</em></strong>
-            <span className={styles['small-text']}> mins</span></span>
-          <p>{mainVideo.overview}</p>
-        </div>
-        <div className={styles['inform-cell-right']}>
-          <span><span className={styles.gray}>Casts:</span> {" "}
-            {
-              videoCasts.slice(0, 4).map((cast, i) => cast.name).join(', ')
-            }
-          </span>
-          <br/>
-          <span>
-            <span className={styles.gray}>Genres:</span> {" "}
-            {videoDetail.genres && videoDetail.genres.map(detail => detail.name).join(', ')}
-          </span>
-        </div>
-      </section>
-      <section className={styles.similar}>
-        <h3>Similar: </h3>
-        <div className={`${styles['similar-list']} ${isExpanded ? styles.expended : styles.collapsed}`}>
-          {
-            similarVideos.filter(video => video.backdrop_path).map((video, key) => <div key={key} className={styles.card}>
-              <img src={getImgUrl(video.backdrop_path)} alt={video.title}/>
-              <span className={styles['video-title']}>{video.title}</span>
-              <div className={styles['similar-inform']}>
-                <span className={styles['release-year']}>Release at <em>{video.release_date.slice(0, 4)}</em></span>
-                {
-                  (video.overview.length >= 180)
-                    ? <p>{video.overview.slice(0, 200)}...</p>
-                    : <p>{video.overview.slice(0, 200)}</p>
-                }
-              </div>
-            </div>)
-          }
-        </div>
-
-        <button className={styles['toggle-button']} onClick={toggleExpand}>
-          {isExpanded ? "▲" : "▼"}
-        </button>
-      </section>
-      <section className={styles.companies}>
-        {
-          videoDetail.production_companies.map(
-            company => company.logo_path
-              ? <img className={styles['company-logo']} src={getImgUrl(company.logo_path)} alt={company.name} />
-              : <span>{company.name}</span>
-          )
-        }
-      </section>
-    </dialog>
+    <MainVideoDialog ref={dialog}
+            closeModal={closeModal}
+            videoDetail={videoDetail}
+            similarVideos={similarVideos}
+            videoCasts={videoCasts}
+            ytVideoId={movieVideo.key}
+            isMain={true}
+            mediaType="movie"
+            dialogPlayerRef={dialogPlayerRef}
+    />
   </>
-}
+})
+
+export default MainVideo;

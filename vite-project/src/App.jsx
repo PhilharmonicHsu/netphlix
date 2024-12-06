@@ -5,10 +5,16 @@ import Main from "./components/Main.jsx";
 import Footer from "./components/Footer.jsx";
 
 function App() {
+  const [searchData, setSearchData] = useState([]);
+
+  const handleUpdateValue = (newValue) => {
+    setSearchData(newValue);
+  }
+
   return (
     <>
-      <Header />
-      <Main />
+      <Header updateValue={handleUpdateValue}/>
+      <Main value={searchData}/>
       <Footer />
     </>
   )
