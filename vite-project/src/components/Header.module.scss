@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0);
+  background: linear-gradient(to bottom, black 0%, transparent 100%);
   transition: all 0.3s ease;
   color: white;
   height: 68px;
@@ -10,6 +10,10 @@
   top: 0;
   z-index: 10;
   width: 100%;
+
+  &.light {
+    background: linear-gradient(to bottom, white 0%, transparent 100%);
+  }
 
   .left_side {
     display: flex;

@@ -9,6 +9,11 @@
   background-color: black;
   color: lightgray;
 
+  &.light {
+    background-color: white;
+    color: black;
+  }
+
   .dialog-button-area {
     text-align: justify;
 
@@ -48,6 +53,20 @@
     height: 2rem;
     border-radius: 50%;
     background-color: black;
+
+    &.light {
+      border: 1px solid black;
+      background-color: white;
+
+      .close-svg path {
+        fill: black;
+      }
+
+      &:hover {
+        background-color: lightgray;
+        cursor: pointer;
+      }
+    }
 
     &:hover {
       background-color: black;
@@ -111,6 +130,10 @@
         overflow: hidden;
         transition: box-shadow 0.3s ease, transform 0.3s ease; // 添加平滑過渡效果
 
+        &.light {
+          background-color: lightgray;
+        }
+
         &:hover {
           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); // 陰影參數：x偏移, y偏移, 模糊半徑, 顏色透明度
           transform: translateY(-5px); // 增加一點上移效果（可選）
@@ -129,7 +152,7 @@
           text-align: center;
           color: white; /* 文字顏色 */
           -webkit-text-stroke: 0.2px darkgray; /* 描邊顏色與寬度 */
-          font-size: 1.5rem;
+          font-size: 1rem;
         }
 
         .similar-inform {

@@ -3,6 +3,9 @@ import './App.css'
 import Header from "./components/Header.jsx";
 import Main from "./components/Main.jsx";
 import Footer from "./components/Footer.jsx";
+import About from "./components/About.jsx";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 
 function App() {
   const [searchData, setSearchData] = useState([]);
@@ -13,15 +16,25 @@ function App() {
     setSearchData(newValue);
   }
 
-  const handleChangeMode = (newValue) => {
-    setLightMode(newValue)
+  const handleChangeMode = () => {
+    setLightMode((prev) => ! prev)
   }
 
   return (
     <>
-      <Header updateValue={handleUpdateValue} handleChangeMode={handleChangeMode} isLightMode={isLightMode}/>
-      <Main value={searchData} isLightMode={isLightMode}/>
-      <Footer isLightMode={isLightMode}/>
+      <Router>
+        <Header updateValue={handleUpdateValue} handleChangeMode={handleChangeMode} isLightMode={isLightMode}/>
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Main value={searchData} isLightMode={isLightMode}/>
+              <Footer isLightMode={isLightMode}/>
+            </>
+            }
+          />
+          <Route path="/about" element={<About isLightMode={isLightMode} />} />
+        </Routes>
+      </Router>
     </>
   )
 }

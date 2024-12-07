@@ -1,9 +1,10 @@
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import styles from "./Dialog.module.scss";
 import {getImgUrl} from "./utils.js";
+import classNames from "classnames";
 
 const Dialog= forwardRef((
-  {closeModal, videoDetail, similarVideos, videoCasts, ytVideoId, isMain, mediaType},
+  {closeModal, videoDetail, similarVideos, videoCasts, ytVideoId, isMain, mediaType, isLightMode},
   ref
 ) => {
   const dialog = useRef(null);
@@ -78,7 +79,10 @@ const Dialog= forwardRef((
     });
   }
 
-  return <dialog className={styles['main-dialog']}
+  return <dialog className={classNames({
+    [styles['main-dialog']]: true,
+    [styles.light]: isLightMode,
+  })}
                  ref={dialog}
                  onClose={closeModal}
                  style={{
@@ -113,7 +117,7 @@ const Dialog= forwardRef((
       }}
     ></div>
     <div className={styles['dialog-header']}>
-      <section className={styles['header']}>\
+      <section className={styles['header']}>
         <h1 style={{fontSize: '3rem', marginBottom: '1rem'}}>{
           mediaType === 'movie' ? videoDetail.title : videoDetail.name
         }</h1>
@@ -122,7 +126,10 @@ const Dialog= forwardRef((
         </div>
       </section>
     </div>
-    <button className={styles['dialog-close-btn']} onClick={closeModal}>
+    <button className={classNames({
+      [styles['dialog-close-btn']]: true,
+      [styles.light]: isLightMode,
+    })} onClick={closeModal}>
       <svg className={styles['close-svg']} width="24" height="24" viewBox="0 0 24 24" fill="none"
            xmlns="http://www.w3.org/2000/svg">
         <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
@@ -167,7 +174,11 @@ const Dialog= forwardRef((
       <h3>Similar: </h3>
       <div className={`${styles['similar-list']} ${isExpanded ? styles.expended : styles.collapsed}`}>
         {
-          similarVideos.filter(video => video.backdrop_path).map((video, key) => <div key={key} className={styles.card}>
+          similarVideos.filter(video => video.backdrop_path).map((video, key) =>
+          <div key={key} className={classNames({
+            [styles.card]: true,
+            [styles.light]: isLightMode
+          })}>
             <img src={getImgUrl(video.backdrop_path)} alt={mediaType === 'movie' ? video.title : video.name}/>
             <span className={styles['video-title']}>{mediaType === 'movie' ? video.title : video.name}</span>
             <div className={styles['similar-inform']}>
@@ -193,9 +204,9 @@ const Dialog= forwardRef((
     <section className={styles.companies}>
       {
         videoDetail.production_companies.map(
-          company => company.logo_path
-            ? <img className={styles['company-logo']} src={getImgUrl(company.logo_path)} alt={company.name}/>
-            : <span>{company.name}</span>
+          (company, index) => company.logo_path
+            ? <img key={index} className={styles['company-logo']} src={getImgUrl(company.logo_path)} alt={company.name}/>
+            : <span key={index}>{company.name}</span>
         )
       }
     </section>

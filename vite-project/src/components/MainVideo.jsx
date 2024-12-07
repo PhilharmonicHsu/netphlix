@@ -1,12 +1,13 @@
 import {useEffect, useRef, useState, forwardRef, useImperativeHandle} from "react";
 import styles from './MainVideo.module.scss'
-import {OPTIONS, getImgUrl} from './utils.js'
+import {OPTIONS, getImgUrl, registerYouTubeIframeAPI} from './utils.js'
 import MainVideoDialog from "./MainVideoDialog.jsx";
 
-const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialogPlayerRef}, ref) => {
+const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialogPlayerRef, isLightMode}, ref) => {
   const containerRef = useRef(null);
   const videoInfoRef = useRef(null);
   const dialog = useRef(null);
+  const ddddRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState(null);
@@ -36,19 +37,11 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
     setMovieVideo(() => data.results[0])
     mainPlayerIdRef.current = data.results[0].key;
 
-    if (window.YT) {
-    } else {
-      console.log('window.onYouTubeIframeAPIReady')
-      const tag = document.createElement('script');
-      tag.id = 'youtube-iframe-api'
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.body.appendChild(tag);
-
-      // 初始化播放器
-      window.onYouTubeIframeAPIReady = () => {
+    if (! window.YT) {
+      registerYouTubeIframeAPI(() => {
         createPlayer(data.results[0].key)
         dialog.current.registerYtAPI()
-      };
+      })
     }
 
     const handleResize = () => {
@@ -112,9 +105,11 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
   }, [])
 
   useEffect(() => {
-    if (containerRef.current && window.YT && window.YT.Player) {
-      createPlayer(mainPlayerIdRef.current)
-      dialog.current.registerYtAPI()
+    if (containerRef.current) {
+      registerYouTubeIframeAPI(() => {
+        createPlayer(mainPlayerIdRef.current)
+        dialog.current.registerYtAPI()
+      })
     }
   }, [containerRef.current])
 
@@ -136,7 +131,7 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
       events: {
         onReady: (event) => {
           console.log('onReady')
-          mainPlayerRef.current.playVideo()
+          ddddRef.current = mainPlayerRef.current;
         },
         onStateChange: (event) => {
           if (event.data === window.YT.PlayerState.ENDED) {
@@ -156,11 +151,11 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
   }
 
   function playVideo() {
-    mainPlayerRef.current.playVideo()
+    ddddRef.current.playVideo()
   }
 
   function pauseVideo() {
-    mainPlayerRef.current.pauseVideo()
+    ddddRef.current.pauseVideo()
   }
 
   function openModal() {
@@ -186,8 +181,7 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
   }
 
   return <>
-    <div ref={containerRef} className={styles.container}
-    >
+    <div ref={containerRef} className={styles.container}>
       <div id="youtube-player" style={{border: "none"}}></div>
       <div
         ref={videoInfoRef}
@@ -255,6 +249,7 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
             isMain={true}
             mediaType="movie"
             dialogPlayerRef={dialogPlayerRef}
+            isLightMode={isLightMode}
     />
   </>
 })

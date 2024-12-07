@@ -114,7 +114,13 @@ export default function Main({value, isLightMode}) {
       {
         (value.length === 0) ?
           <>
-            <MainVideo ref={mainVideoRef} mainVideo={movies[0]} mainPlayerRef={mainPlayerRef} mainPlayerIdRef={mainPlayerIdRef} dialogPlayerRef={dialogPlayerRef} />
+            <MainVideo ref={mainVideoRef}
+                       mainVideo={movies[0]}
+                       mainPlayerRef={mainPlayerRef}
+                       mainPlayerIdRef={mainPlayerIdRef}
+                       dialogPlayerRef={dialogPlayerRef}
+                       isLightMode={isLightMode}
+            />
             <div style={{position: 'relative', height: '125rem'}}>
               <SwiperVideos videos={movies} category="trending" mediaType="movie" playMainVideo={playMainVideo}
                             pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Trending</SwiperVideos>

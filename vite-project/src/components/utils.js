@@ -58,3 +58,18 @@ export const OPTIONS = {
 export function getImgUrl(posterPath) {
   return `https://image.tmdb.org/t/p/w780/${posterPath}`
 }
+
+export function registerYouTubeIframeAPI(callback) {
+  if (window.YT && window.YT.Player) {
+    callback();
+  } else {
+    const tag = document.createElement('script');
+    tag.id = 'youtube-iframe-api'
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.body.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = () => {
+      callback()
+    }
+  }
+}

@@ -1,0 +1,49 @@
+.footer {
+  height: 20rem;
+  background-color: black;
+  color: lightgray;
+
+  &.light {
+    background-color: white;
+    color: black;
+  }
+
+  .informs {
+    .inform {
+      color: gray;
+      text-decoration: none;
+      margin-right: 1rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    .informs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-content: center;
+    }
+  }
+
+  .contacts {
+    margin-top: 2rem;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+
+
+    .contact {
+      color: gray;
+      margin-right: 1rem;
+    }
+  }
+
+  .copyright {
+    margin-top: 1rem;
+  }
+}

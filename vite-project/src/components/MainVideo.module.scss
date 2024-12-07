@@ -1,7 +1,6 @@
 body.modal-open {
-  overflow: hidden !important; /* 禁用背景滾動 */
+  overflow-y: hidden !important; /* 禁用背景滾動 */
 }
-
 
 .container {
   width: 100%;
