@@ -47,14 +47,6 @@ export function getTvGenreById(genreId) {
   return dd[genreId];
 }
 
-export const OPTIONS = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YzI4NmIxZTkxN2VhNDJhNjRhNjdlYmYzOGFjYmU3ZiIsIm5iZiI6MTYzOTIyNjA0Ni42NzgwMDAyLCJzdWIiOiI2MWI0OWFiZTAzNzI2NDAwNDEyNDZjYzIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.fDCZu-3CtrFKsJ_9Ukx7XREJzjpJ72nR8CgN_X9ufMM'
-  }
-};
-
 export function getImgUrl(posterPath) {
   return `https://image.tmdb.org/t/p/w780/${posterPath}`
 }

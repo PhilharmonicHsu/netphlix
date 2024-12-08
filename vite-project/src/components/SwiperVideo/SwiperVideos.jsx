@@ -3,11 +3,12 @@ import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import './SwiperVideo.scss'
-import {OPTIONS, registerYouTubeIframeAPI} from "./utils.js";
+import {registerYouTubeIframeAPI} from "../../utils/helper.js";
 import {useRef, useState, useEffect} from "react";
-import Dialog from "./Dialog.jsx";
+import Dialog from "../Dialog/Dialog.jsx";
 import classNames from "classnames";
-import MovieItem from "./MovieItem.jsx";
+import MovieItem from "../MovieItem/MovieItem.jsx";
+import ApiService from "../../services/ApiService.js";
 
 function getSwiperUnit() {
   if (window.innerWidth < 601) {
@@ -42,10 +43,18 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
 
   const handleCardClick = async (movieId) => {
     pauseMainVideo()
-    await getMovieVideos(movieId);
-    await getMovieDetail(movieId);
-    await getMovieCasts(movieId);
-    await getSimilarVideos(movieId);
+
+    const movieVideos = await ApiService.getMovieVideos(movieId, mediaType);
+    setMovieVideo(() => movieVideos.results[0])
+
+    const videoDetail = await ApiService.getMovieDetail(movieId, mediaType)
+    setVideoDetail(videoDetail)
+
+    const videoCasts = await ApiService.getMovieCasts(movieId, mediaType);
+    setVideoCasts(videoCasts.cast)
+
+    const relatedVideos = await ApiService.getRelatedVideos(movieId, mediaType);
+    setSimilarVideos(relatedVideos.results)
 
     setIsDialogOpen(true);
   };
@@ -55,42 +64,6 @@ export default function SwiperVideos({children, videos, category, mediaType, pla
     dialogRef.current.closeModal();
     setIsDialogOpen(false);
   };
-
-  async function getMovieVideos(movieId) {
-    console.log(`https://api.themoviedb.org/3/${mediaType}/${movieId}/videos?language=en-US`)
-    let response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/videos?language=en-US`, OPTIONS)
-    let data = await response.json()
-
-    setMovieVideo(() => data.results[0])
-  }
-
-  async function getMovieDetail(movieId) {
-    let response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}`, OPTIONS)
-    let data = await response.json()
-
-    setVideoDetail(data);
-  }
-
-  async function getMovieCasts(movieId) {
-    let response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/credits?api_key=4c286b1e917ea42a64a67ebf38acbe7f`, OPTIONS)
-    let data = await response.json()
-
-    setVideoCasts(data.cast)
-  }
-
-  async function getSimilarVideos(movieId) {
-    let response;
-
-    if (mediaType === 'movie') {
-      response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/similar?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
-    } else {
-      response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/recommendations?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
-    }
-
-    let data = await response.json()
-
-    setSimilarVideos(data.results)
-  }
 
   return <div className={category} >
     <div className={classNames({

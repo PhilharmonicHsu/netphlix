@@ -1,7 +1,9 @@
 import {useEffect, useRef, useState, forwardRef, useImperativeHandle} from "react";
 import styles from './MainVideo.module.scss'
-import {OPTIONS, getImgUrl, registerYouTubeIframeAPI} from './utils.js'
-import MainVideoDialog from "./MainVideoDialog.jsx";
+import {getImgUrl, registerYouTubeIframeAPI} from '../../utils/helper.js'
+import MainVideoDialog from "../Dialog/MainVideoDialog.jsx";
+import YoutubePlayer from "../../models/YoutubePlayer.js";
+import ApiService from "../../services/ApiService.js";
 
 const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialogPlayerRef, isLightMode}, ref) => {
   const containerRef = useRef(null);
@@ -30,16 +32,57 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
     }
   }))
 
-  async function getMovieVideos() {
-    let response = await fetch(`https://api.themoviedb.org/3/movie/${mainVideo.id}/videos?language=en-US`, OPTIONS)
-    let data = await response.json()
+  function playVideo() {
+    ddddRef.current.playVideo()
+  }
 
-    setMovieVideo(() => data.results[0])
-    mainPlayerIdRef.current = data.results[0].key;
+  function pauseVideo() {
+    ddddRef.current.pauseVideo()
+  }
+
+  function hiddenBackGroundImage() {
+    videoInfoRef.current.style.opacity = "0"
+  }
+
+  function showBackGroundImage() {
+    videoInfoRef.current.style.opacity = "1"
+  }
+
+  useEffect(() => {
+    fetchApi()
+  }, [])
+
+  async function fetchApi() {
+    const images = await ApiService.getImages(mainVideo.id);
+    setMainImage(getImgUrl(images.backdrops[0].file_path))
+
+    await getMovieVideos();
+
+    const movieDetail = await ApiService.getMovieDetail(mainVideo.id, 'movie');
+    setVideoDetail(movieDetail);
+
+    const movieCasts = await ApiService.getMovieCasts(mainVideo.id, 'movie');
+    setVideoCasts(movieCasts.cast)
+
+    const relatedVideos = await ApiService.getRelatedVideos(mainVideo.id, 'movie');
+    setSimilarVideos(relatedVideos.results)
+
+    setLoading(false);
+
+    setTimeout(() => {
+      setIsPreview(true)
+    }, 5000);
+  }
+
+  async function getMovieVideos() {
+    let movieVideos = await ApiService.getMovieVideos(mainVideo.id, 'movie')
+
+    setMovieVideo(() => movieVideos.results[0])
+    mainPlayerIdRef.current = movieVideos.results[0].key;
 
     if (! window.YT) {
       registerYouTubeIframeAPI(() => {
-        createPlayer(data.results[0].key)
+        createPlayer(movieVideos.results[0].key)
         dialog.current.registerYtAPI()
       })
     }
@@ -47,62 +90,15 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
     const handleResize = () => {
       if (mainPlayerRef.current && containerRef.current) {
         const newWidth = containerRef.current.offsetWidth;
+
         mainPlayerRef.current.setSize(newWidth, (newWidth * 9) / 16);
       }
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }
-
-  async function getImages() {
-    let response = await fetch(`https://api.themoviedb.org/3/movie/${mainVideo.id}/images`, OPTIONS)
-    let data = await response.json()
-
-    setMainImage(getImgUrl(data.backdrops[0].file_path))
-  }
-
-  async function getMovieDetail() {
-    let response = await fetch(`https://api.themoviedb.org/3/movie/${mainVideo.id}`, OPTIONS)
-    let data = await response.json()
-
-    setVideoDetail(data);
-  }
-
-  async function getMovieCasts() {
-    let response = await fetch(`https://api.themoviedb.org/3/movie/${mainVideo.id}/credits?api_key=4c286b1e917ea42a64a67ebf38acbe7f`, OPTIONS)
-    let data = await response.json()
-
-    setVideoCasts(data.cast)
-  }
-
-  async function getSimilarVideos() {
-    let response = await fetch(`https://api.themoviedb.org/3/movie/${mainVideo.id}/similar?api_key=4c286b1e917ea42a64a67ebf38acbe7f&language=en-US&page=1`, OPTIONS)
-    let data = await response.json()
-
-    setSimilarVideos(data.results)
-  }
-
-  async function fetchApi() {
-    await Promise.all([
-      getImages(),
-      getMovieVideos(),
-      getMovieDetail(),
-      getMovieCasts(),
-      getSimilarVideos()
-    ]);
-
-    setLoading(false);
-
-    setTimeout(() => {
-      setIsPreview(true)
-    }, 2000);
-  }
-
-  useEffect(() => {
-    fetchApi()
-  }, [])
 
   useEffect(() => {
     if (containerRef.current) {
@@ -114,48 +110,21 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
   }, [containerRef.current])
 
   function createPlayer(videoId) {
-    mainPlayerRef.current = new window.YT.Player('youtube-player', {
-      videoId: videoId, // 替換成你的影片 ID
-      width: window.innerWidth,
-      height: (window.innerWidth * 9) / 17,
-      playerVars: {
-        autoplay: 1, // 自動播放
-        controls: 0, // 隱藏控制器
-        modestbranding: 1, // 隱藏大型 YouTube 標誌
-        rel: 1, // 不顯示相關影片
-        fs: 0, // 隱藏全螢幕按鈕
-        iv_load_policy: 3, // 隱藏註解
-        mute: 1, // 靜音播放
-        showinfo: 0
-      },
-      events: {
-        onReady: (event) => {
-          console.log('onReady')
-          ddddRef.current = mainPlayerRef.current;
-        },
-        onStateChange: (event) => {
-          if (event.data === window.YT.PlayerState.ENDED) {
-            showBackGroundImage()
-          }
-        },
-      },
-    });
-  }
-
-  function hiddenBackGroundImage() {
-    videoInfoRef.current.style.opacity = "0"
-  }
-
-  function showBackGroundImage() {
-    videoInfoRef.current.style.opacity = "1"
-  }
-
-  function playVideo() {
-    ddddRef.current.playVideo()
-  }
-
-  function pauseVideo() {
-    ddddRef.current.pauseVideo()
+    mainPlayerRef.current = new YoutubePlayer('youtube-player', videoId)
+      .width(window.innerWidth)
+      .height(window.innerHeight)
+      .autoplay()
+      .hiddenControl()
+      .mute()
+      .onReady((event) => {
+        ddddRef.current = mainPlayerRef.current;
+      })
+      .onStateChange((event) => {
+        if (event.data === YoutubePlayer.PLAYER_STATE_ENDED) {
+          showBackGroundImage()
+        }
+      })
+      .build();
   }
 
   function openModal() {

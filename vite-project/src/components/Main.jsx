@@ -1,8 +1,8 @@
 import {useState, useEffect, useRef} from "react";
-import MainVideo from "./MainVideo.jsx";
-import SwiperVideos from "./SwiperVideos.jsx";
-import {OPTIONS} from "./utils.js";
-import SearchedVideos from "./SearchedVideos.jsx";
+import MainVideo from "./MainVideo/MainVideo.jsx";
+import SwiperVideos from "./SwiperVideo/SwiperVideos.jsx";
+import SearchedVideos from "./SearchedVideos/SearchedVideos.jsx";
+import ApiService from "../services/ApiService.js";
 
 export default function Main({value, isLightMode}) {
   const mainVideoRef = useRef(null);
@@ -18,81 +18,87 @@ export default function Main({value, isLightMode}) {
   const [onTheAirTVs, setOnTheAirTVs] = useState([]);
   const [popularTVs, setPopularTVs] = useState([]);
   const [topRatedTVs, setTopRateTVs] = useState([]);
-
-  console.log('main:', value)
-
-  async function getPopularMovies() {
-    let response = await fetch('https://api.themoviedb.org/3/trending/movie/day?api_key=4c286b1e917ea42a64a67ebf38acbe7f')
-    let data = await response.json()
-
-    setMovies(data.results);
-  }
-
-  async function getNowPlayingMovies() {
-    let response = await fetch('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1', OPTIONS)
-    let data = await response.json()
-
-    setNowPlayingMovies(data.results)
-  }
-
-  async function getTopRatedMovies() {
-    let response = await fetch('https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1', OPTIONS)
-    let data = await response.json()
-
-    setTopRatedMovies(data.results)
-  }
-
-  async function getUpcomingMovies() {
-    let response = await fetch('https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1', OPTIONS)
-    let data = await response.json()
-
-    setUpcomingMovies(data.results)
-  }
-
-  async function getAiringTodayTVs() {
-    let response = await fetch('https://api.themoviedb.org/3/tv/airing_today?api_key=4c286b1e917ea42a64a67ebf38acbe7f')
-    let data = await response.json()
-
-    setAiringTodayTVs(data.results)
-  }
-
-  async function getOnTheAirTVs() {
-    let response = await fetch('https://api.themoviedb.org/3/tv/on_the_air?api_key=4c286b1e917ea42a64a67ebf38acbe7f')
-    let data = await response.json()
-
-    setOnTheAirTVs(data.results)
-  }
-
-  async function getPopularTVs() {
-    let response = await fetch('https://api.themoviedb.org/3/tv/popular?api_key=4c286b1e917ea42a64a67ebf38acbe7f')
-    let data = await response.json()
-
-    setPopularTVs(data.results)
-  }
-
-  async function getTopRatedTVs() {
-    let response = await fetch('https://api.themoviedb.org/3/tv/top_rated?api_key=4c286b1e917ea42a64a67ebf38acbe7f')
-    let data = await response.json()
-
-    setTopRateTVs(data.results)
-  }
+  const mainList = [
+    {
+      name: 'trending',
+      mediaType: 'movie',
+      title: 'Trending',
+      videos: movies
+    },
+    {
+      name: 'now_playing',
+      mediaType: 'movie',
+      title: 'Now Playing',
+      videos: nowPlayingMovies
+    },
+    {
+      name: 'top_rated',
+      mediaType: 'movie',
+      title: 'Top Rated',
+      videos: topRatedMovies
+    },
+    {
+      name: 'upcoming',
+      mediaType: 'movie',
+      title: 'Upcoming',
+      videos: upcomingMovies
+    },
+    {
+      name: 'airing_today',
+      mediaType: 'tv',
+      title: 'Airing Today',
+      videos: airingTodayTVs
+    },
+    {
+      name: 'on_the_air',
+      mediaType: 'tv',
+      title: 'On The Air',
+      videos: onTheAirTVs
+    },
+    {
+      name: 'popular_tv',
+      mediaType: 'tv',
+      title: 'Popular TV',
+      videos: popularTVs
+    },
+    {
+      name: 'top_rated_tv',
+      mediaType: 'tv',
+      title: 'Top Rated TV',
+      videos: topRatedTVs
+    },
+  ]
 
   async function fetchApi() {
-    await getPopularMovies();
-    await getNowPlayingMovies();
-    await getTopRatedMovies();
-    await getUpcomingMovies();
-    await getAiringTodayTVs();
-    await getOnTheAirTVs();
-    await getPopularTVs();
-    await getTopRatedTVs();
+    const popularMovies = await ApiService.getPopularMovies();
+    setMovies(popularMovies.results);
+
+    const nowPlayingMovies = await ApiService.getNowPlayingMovies();
+    setNowPlayingMovies(nowPlayingMovies.results)
+
+    const topRatedMovies = await ApiService.getTopRatedMovies();
+    setTopRatedMovies(topRatedMovies.results);
+
+    const upcomingMovies = await ApiService.getUpcomingMovies();
+    setUpcomingMovies(upcomingMovies.results);
+
+    const AiringTodayTVShows = await ApiService.getAiringTodayTVs();
+    setAiringTodayTVs(AiringTodayTVShows.results);
+
+    const onTheAirTVShows = await ApiService.getOnTheAirTVs();
+    setOnTheAirTVs(onTheAirTVShows.results);
+
+    const popularTVShows = await ApiService.getPopularTVs();
+    setPopularTVs(popularTVShows.results);
+
+    const topRatedTVShows = await ApiService.getTopRatedTVs();
+    setTopRateTVs(topRatedTVShows.results);
 
     setIsLoading(false);
   }
 
   useEffect( () => {
     fetchApi();
-
   }, [])
 
   function playMainVideo() {
@@ -122,20 +128,20 @@ export default function Main({value, isLightMode}) {
                        isLightMode={isLightMode}
             />
             <div style={{position: 'relative', height: '125rem'}}>
-              <SwiperVideos videos={movies} category="trending" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Trending</SwiperVideos>
-              <SwiperVideos videos={nowPlayingMovies} category="now_playing" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Now Playing</SwiperVideos>
-              <SwiperVideos videos={topRatedMovies} category="top_rated" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Top Rated</SwiperVideos>
-              <SwiperVideos videos={upcomingMovies} category="upcoming" mediaType="movie" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Upcoming</SwiperVideos>
-              <SwiperVideos videos={airingTodayTVs} category="airing_today" mediaType="tv" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>Airing Today</SwiperVideos>
-              <SwiperVideos videos={onTheAirTVs} category="on_the_air" mediaType="tv" playMainVideo={playMainVideo}
-                            pauseMainVideo={pauseMainVideo} isLightMode={isLightMode}>On The Air</SwiperVideos>
-              <SwiperVideos videos={popularTVs} category="popular_tv" mediaType="tv" isLightMode={isLightMode}>Popular TV</SwiperVideos>
-              <SwiperVideos videos={topRatedTVs} category="top_rated_tv" mediaType="tv" isLightMode={isLightMode}>Top Rated TV</SwiperVideos>
+              {
+                mainList.map((item, index) => (
+                  <SwiperVideos key={index}
+                                videos={item.videos}
+                                category={item.name}
+                                mediaType={item.mediaType}
+                                playMainVideo={playMainVideo}
+                                pauseMainVideo={pauseMainVideo}
+                                isLightMode={isLightMode}
+                  >
+                    {item.title}
+                  </SwiperVideos>
+                ))
+              }
             </div>
           </>
           :

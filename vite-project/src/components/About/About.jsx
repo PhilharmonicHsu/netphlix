@@ -1,5 +1,5 @@
 import styles from "./About.module.scss";
-import teamImg from "../assets/team.png";
+import teamImg from "../../assets/team.png";
 import classNames from "classnames";
 
 export default function About({isLightMode}) {

@@ -1,17 +1,18 @@
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import styles from "./Dialog.module.scss";
-import {getImgUrl} from "./utils.js";
+import {getImgUrl} from "../../utils/helper.js";
 import classNames from "classnames";
+import YoutubePlayer from "../../models/YoutubePlayer.js";
 
-const MainVideoDialog= forwardRef((
-  {closeModal, videoDetail, similarVideos, videoCasts, ytVideoId, isMain, mediaType, dialogPlayerRef, isLightMode},
+const Dialog= forwardRef((
+  {closeModal, videoDetail, similarVideos, videoCasts, ytVideoId, isMain, mediaType, isLightMode},
   ref
 ) => {
   const dialog = useRef(null);
+  const dialogPlayerRef = useRef(null);
   const dialogInfoRef = useRef(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const ytFrameId = isMain ? ytVideoId + 'main' : ytVideoId;
-  const ddddRef = useRef(null);
 
   function showDialogBackGroundImage() {
     dialogInfoRef.current.style.opacity = "1"
@@ -25,10 +26,10 @@ const MainVideoDialog= forwardRef((
 
   useImperativeHandle(ref, () => ({
     playDialogVideo: () => {
-      ddddRef.current.playVideo();
+      dialogPlayerRef.current.playVideo();
     },
     pauseDialogVideo: () => {
-      ddddRef.current.pauseVideo();
+      dialogPlayerRef.current.pauseVideo();
     },
     showModal: () => {
       dialog.current.showModal();
@@ -37,30 +38,16 @@ const MainVideoDialog= forwardRef((
       dialog.current.close();
     },
     registerYtAPI: () => {
-      dialogPlayerRef.current = new window.YT.Player(ytFrameId, {
-        videoId: ytVideoId, // 替換成你的影片 ID
-        width: '100%',
-        playerVars: {
-          autoplay: 1, // 自動播放
-          controls: 0, // 隱藏控制器
-          modestbranding: 1, // 隱藏大型 YouTube 標誌
-          rel: 1, // 不顯示相關影片
-          fs: 0, // 隱藏全螢幕按鈕
-          iv_load_policy: 3, // 隱藏註解
-          mute: 1, // 靜音播放
-          showinfo: 0
-        },
-        events: {
-          onReady: (event) => {
-            ddddRef.current = dialogPlayerRef.current
-          },
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
-              showDialogBackGroundImage()
-            }
-          },
-        },
-      });
+      dialogPlayerRef.current = new YoutubePlayer(ytFrameId, ytVideoId)
+        .width('100%')
+        .autoplay()
+        .hiddenControl()
+        .mute()
+        .onStateChange((event) => {
+          if (event.data === YoutubePlayer.PLAYER_STATE_ENDED) {
+            showDialogBackGroundImage()
+          }
+        }).build()
     }
   }))
 
@@ -80,8 +67,6 @@ const MainVideoDialog= forwardRef((
     });
   }
 
-  console.log(isLightMode)
-
   return <dialog className={classNames({
     [styles['main-dialog']]: true,
     [styles.light]: isLightMode,
@@ -89,7 +74,7 @@ const MainVideoDialog= forwardRef((
                  ref={dialog}
                  onClose={closeModal}
                  style={{
-                   animation: "scale-up 3s ease forwards",
+                   animation: "scale-up 1s ease forwards",
                  }}
   >
     <div id={ytFrameId} style={
@@ -131,12 +116,9 @@ const MainVideoDialog= forwardRef((
     </div>
     <button className={classNames({
       [styles['dialog-close-btn']]: true,
-      [styles.light]: isLightMode
+      [styles.light]: isLightMode,
     })} onClick={closeModal}>
-      <svg className={classNames({
-        [styles['close-svg']]: true,
-        [styles.light]: isLightMode,
-      })} width="24" height="24" viewBox="0 0 24 24" fill="none"
+      <svg className={styles['close-svg']} width="24" height="24" viewBox="0 0 24 24" fill="none"
            xmlns="http://www.w3.org/2000/svg">
         <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
               fill="black"/>
@@ -219,4 +201,4 @@ const MainVideoDialog= forwardRef((
   </dialog>
 })
 
-export default MainVideoDialog;
+export default Dialog;

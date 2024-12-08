@@ -1,0 +1,115 @@
+body {
+  overflow-x: hidden;
+  background-color: #141414;
+}
+
+.swiper {
+  overflow: visible;
+  padding: 0 2rem;
+}
+
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 0; /* 確保元素間沒有額外的間隙 */
+}
+
+.swiper-title {
+  text-align: start;
+  color: white;
+  font-size: 2rem;
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+
+  &.light {
+    color: black;
+    background: linear-gradient(to right, darkgray 0%, transparent 10%);
+  }
+}
+
+.swiper-button-prev, .swiper-button-next {
+  color: white; /* 設置箭頭顏色 */
+  width: 3rem;
+  height: 200px;
+  top: 0;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgba(255, 255, 255, 0.8); /* 滑鼠懸停顏色 */
+  color: black;
+}
+
+@mixin swiper_videos($category) {
+  @if $category == 'trending' {
+    top: -12rem;
+  } @else if $category == 'now_playing' {
+    top: 4rem;
+  } @else if $category == 'top_rated' {
+    top: 20rem;
+  } @else if $category == 'upcoming' {
+    top: 36rem;
+  } @else if $category == 'airing_today' {
+    top: 52rem;
+  } @else if $category == 'on_the_air' {
+    top: 68rem;
+  } @else if $category == 'popular_tv' {
+    top: 84rem;
+  } @else if $category == 'top_rated_tv' {
+    top: 100rem;
+  }
+
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0;
+
+  &:hover {
+    z-index: 9;
+  }
+}
+
+.trending {
+  @include swiper_videos('trending')
+}
+
+.now_playing {
+  @include swiper_videos('now_playing')
+}
+
+.top_rated {
+  @include swiper_videos('top_rated')
+}
+
+.upcoming {
+  @include swiper_videos('upcoming')
+}
+
+.airing_today {
+  @include swiper_videos('airing_today')
+}
+
+.on_the_air {
+  @include swiper_videos('on_the_air')
+}
+
+.popular_tv {
+  @include swiper_videos('popular_tv')
+}
+
+.top_rated_tv {
+  @include swiper_videos('top_rated_tv')
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
