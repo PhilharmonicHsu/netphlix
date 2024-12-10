@@ -190,7 +190,7 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
                 marginRight: '10px',
               }}
             >
-              ▶ 播放
+              ▶ PLAY
             </button>
             <button
               style={{
@@ -203,7 +203,7 @@ const MainVideo = forwardRef(({mainVideo, mainPlayerRef, mainPlayerIdRef, dialog
               }}
               onClick={openModal}
             >
-              ⓘ 詳情
+              ⓘ INFO
             </button>
           </div>
         </div>

@@ -59,8 +59,6 @@ export default function Header({updateValue, handleChangeMode, isLightMode}) {
 
   // 重置倒數
   const handleReset = () => {
-    console.log('reset timer');
-
     setIsRunning(false);
     setTimeLeft(1000); // 將倒數時間重置為初始值
   };

@@ -70,8 +70,6 @@ const MainVideoDialog= forwardRef((
     });
   }
 
-  console.log(isLightMode)
-
   return <dialog className={classNames({
     [styles['main-dialog']]: true,
     [styles.light]: isLightMode,

@@ -194,6 +194,11 @@ dialog::backdrop {
   align-items: center;
   justify-content: center;
   margin-top: 1.5rem;
+  color: lightgray;
+
+  &.light {
+    color: black;
+  }
 
   .company-logo {
     height: 3rem;

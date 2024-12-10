@@ -12,7 +12,6 @@ function App() {
   const [isLightMode, setLightMode] = useState(false);
 
   const handleUpdateValue = (newValue) => {
-    console.log('handleUpdateValue')
     setSearchData(newValue);
   }
 

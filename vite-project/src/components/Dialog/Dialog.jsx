@@ -189,7 +189,10 @@ const Dialog= forwardRef((
         {isExpanded ? "▲" : "▼"}
       </button>
     </section>
-    <section className={styles.companies}>
+    <section className={classNames({
+      [styles.companies]: true,
+      [styles.light]: isLightMode
+    })}>
       {
         videoDetail.production_companies.map(
           (company, index) => company.logo_path
