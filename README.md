@@ -1,43 +1,73 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/0S8pm_d1)
-# Web 2 - Midterm: Movie Web App
+# Movie Web App 🎬
 
-**Goal:** Design and build a movie website app where it displays the trending movies and TV series of the day. The website should also include a search bar that the user can use to search for a title.
+A sleek and modern web application built with **React** that allows users to browse, search, and explore movies using the **TMDB API**. This project incorporates key design patterns, including **Builder** and **Singleton**, to enhance scalability and maintainability.
 
-## Instructions ✔️
+---
 
-1. Clone the repository to your local machine.
-2. Create the necessary branches for development such as `dev`. Do not work on the `main` branch.
-3. Create your wireframe and design on Figma or Whimsical. There is an example wireframe provided but you can create your own! Make sure to give your website your own unique name as well. For example: **FunMovies.com, MidnightPopcorn, FilmBuffs, etc.** Create your own logo for the website.
-4. For the API, use TMDB API to retrieve the data [https://developer.themoviedb.org/reference/intro/getting-started]. You need to create an account because an API key is needed to make requests. Read their documentation on how to send a GET request.
-5. You can use different libraries to build your project. This includes jQuery, carousels, sliders, or for those who want to use React, you can!
-6. Commit and push your changes. Before the presentation day, make sure to create a pull request to the `main` branch.
+## Features ✨
 
-## Features 💻
+- **Search Movies**: Find your favorite movies quickly with a responsive search bar.
+- **Movie Details**: View detailed information about each movie, including synopsis, ratings, and more.
+- **Responsive Design**: Optimized for mobile, tablet, and desktop.
+- **TMDB API Integration**: Fetch real-time movie data from [The Movie Database (TMDB)](https://www.themoviedb.org/documentation/api).
 
-You can create more features but your movie website should have at least these:
+---
 
-- **Responsive** - The website must be responsive and mobile-friendly.
-- **Dark/Light Mode** - The website should have a dark and light mode which the user can switch between by clicking on a button or icon.
-- **Search** - The user should be able to search for movies/tv shows. You don't need to have a separate page to show the results. You can add the search box on the header depending on your design.
+## Tech Stack 🛠️
 
-## Pages 📄
+- **Frontend Framework**: [React](https://reactjs.org/)
+- **Styling**: SCSS
+- **API**: [TMDB API](https://www.themoviedb.org/documentation/api)
 
-You can create more pages but your movie website should have at least these:
+---
 
-- **Home** - Your homepage should display the trending movies and TV shows of the day.
-- **About** - Information about your movie website.
+## Design Patterns Used 🧩
 
-## API Endpoints 🤖
+### 1. Builder Pattern
+Used to conveniently construct YoutubePlayer objects.
 
-Below are some of the endpoints you might use on the website. You are free to use more.
+### 2. Singleton Pattern
+Implemented to manage a single instance of the YoutubePlayer client, ensuring video play correctly.
 
-- [https://developer.themoviedb.org/reference/trending-movies]
-- [https://developer.themoviedb.org/reference/trending-tv]
-- [https://developer.themoviedb.org/reference/search-keyword]
-- [https://developer.themoviedb.org/reference/search-multi]
+---
 
-## Presentation 📽️
+## Setup Instructions 🚀
 
-Each student needs to present their project for at least 10 minutes. Present and explain your Figma design and show off all your features and pages.
+### Prerequisites
+- Node.js and npm installed on your machine.
 
-*Good luck!*
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd vite-project
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+   
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   
+4. Set up your TMDB API key:
+   - Get your API key & Authorization from TMDB.
+   - Create a .env file in the project root and add:
+     ```
+     VITE_TMDB_API_KEY=your_api_key_here
+     VITE_TMDB_AUTHORIZATION=your_authorization_here
+     ```
+
+4. Open your browser and navigate to http://localhost:5174.
+
+## Screenshots 📸!
+### Homepage:
+![Homepage Screenshot](public/images/homepage-screenshot.png)
+### Movie Details Page:
+![Movie Details Screenshot](public/images/movie-details-screenshot.png)
+
+## Acknowledgments 🙌
+- TMDB API for providing the movie data.
+- Open-source tools and libraries that made this project possible.
